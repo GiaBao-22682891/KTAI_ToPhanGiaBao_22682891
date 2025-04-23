@@ -42,7 +42,7 @@ const [students, setStudents] = useState([
 
     // Xử lý xóa sinh viên
     const handleDelete = (id) => {
-    setStudents(students.filter((student) => student.id !== id));
+        setStudents(students.filter((student) => student.id !== id));
     };
 
     return (

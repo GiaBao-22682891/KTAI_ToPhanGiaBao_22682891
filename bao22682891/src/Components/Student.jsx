@@ -19,8 +19,9 @@ const Student = () => {
   // State cho form sửa sinh viên
   const [editStudent, setEditStudent] = useState(null);
 
-  // State cho tìm kiếm
+  // State cho tìm kiếm và lọc
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedClass, setSelectedClass] = useState('all');
 
   // Xử lý thay đổi input (thêm sinh viên)
   const handleInputChange = (e) => {
@@ -94,10 +95,20 @@ const Student = () => {
     setSearchQuery(e.target.value);
   };
 
-  // Lọc danh sách sinh viên theo tìm kiếm
-  const filteredStudents = students.filter((student) =>
-    student.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Xử lý thay đổi lớp được chọn
+  const handleClassChange = (e) => {
+    setSelectedClass(e.target.value);
+  };
+
+  // Lấy danh sách lớp duy nhất
+  const uniqueClasses = [...new Set(students.map((student) => student.className))];
+
+  // Lọc danh sách sinh viên theo tìm kiếm và lớp
+  const filteredStudents = students.filter((student) => {
+    const matchesSearch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesClass = selectedClass === 'all' || student.className === selectedClass;
+    return matchesSearch && matchesClass;
+  });
 
   return (
     <div className="container">
@@ -138,15 +149,32 @@ const Student = () => {
         <button type="submit" className="add-button">Thêm sinh viên</button>
       </form>
 
-      {/* Input tìm kiếm */}
-      <div className="search-container">
-        <input
-          type="text"
-          className="search-input"
-          value={searchQuery}
-          onChange={handleSearchChange}
-          placeholder="Tìm kiếm theo tên..."
-        />
+      {/* Tìm kiếm và lọc */}
+      <div className="filter-container">
+        <div className="search-container">
+          <input
+            type="text"
+            className="search-input"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Tìm kiếm theo tên..."
+          />
+        </div>
+        <div className="class-filter">
+          <label>Lọc theo lớp:</label>
+          <select
+            value={selectedClass}
+            onChange={handleClassChange}
+            className="class-select"
+          >
+            <option value="all">Tất cả</option>
+            {uniqueClasses.map((className) => (
+              <option key={className} value={className}>
+                {className}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Bảng danh sách sinh viên */}

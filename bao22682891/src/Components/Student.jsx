@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../CSS/Student.css';
 
 const Student = () => {
-  // Dữ liệu sinh viên mẫu
-  const [students, setStudents] = useState([
-    { id: 1, name: 'Nguyễn Văn A', className: '12A1', age: 18 },
-    { id: 2, name: 'Trần Thị B', className: '12A2', age: 17 },
-    { id: 3, name: 'Lê Văn C', className: '12A3', age: 18 },
-  ]);
+  // Khởi tạo danh sách sinh viên từ localStorage hoặc dữ liệu mẫu
+  const [students, setStudents] = useState(() => {
+    const savedStudents = localStorage.getItem('students');
+    return savedStudents
+      ? JSON.parse(savedStudents)
+      : [
+          { id: 1, name: 'Nguyễn Văn A', className: '12A1', age: 18 },
+          { id: 2, name: 'Trần Thị B', className: '12A2', age: 17 },
+          { id: 3, name: 'Lê Văn C', className: '12A3', age: 18 },
+        ];
+  });
 
   // State cho form thêm sinh viên
   const [newStudent, setNewStudent] = useState({
@@ -22,6 +27,11 @@ const Student = () => {
   // State cho tìm kiếm và lọc
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedClass, setSelectedClass] = useState('all');
+
+  // Lưu danh sách sinh viên vào localStorage khi students thay đổi
+  useEffect(() => {
+    localStorage.setItem('students', JSON.stringify(students));
+  }, [students]);
 
   // Xử lý thay đổi input (thêm sinh viên)
   const handleInputChange = (e) => {
@@ -38,7 +48,7 @@ const Student = () => {
     }
 
     const student = {
-      id: students.length + 1,
+      id: students.length ? Math.max(...students.map(s => s.id)) + 1 : 1,
       name: newStudent.name,
       className: newStudent.className,
       age: parseInt(newStudent.age),

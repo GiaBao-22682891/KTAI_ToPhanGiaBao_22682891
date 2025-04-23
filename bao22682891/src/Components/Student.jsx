@@ -19,6 +19,9 @@ const Student = () => {
   // State cho form sửa sinh viên
   const [editStudent, setEditStudent] = useState(null);
 
+  // State cho tìm kiếm
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Xử lý thay đổi input (thêm sinh viên)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +51,7 @@ const Student = () => {
   const handleDelete = (id) => {
     setStudents(students.filter((student) => student.id !== id));
     if (editStudent && editStudent.id === id) {
-      setEditStudent(null); // Đóng form sửa nếu sinh viên bị xóa
+      setEditStudent(null);
     }
   };
 
@@ -78,13 +81,23 @@ const Student = () => {
           : student
       )
     );
-    setEditStudent(null); // Đóng form sau khi lưu
+    setEditStudent(null);
   };
 
   // Xử lý hủy sửa
   const handleCancelEdit = () => {
     setEditStudent(null);
   };
+
+  // Xử lý thay đổi tìm kiếm
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Lọc danh sách sinh viên theo tìm kiếm
+  const filteredStudents = students.filter((student) =>
+    student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="container">
@@ -125,6 +138,17 @@ const Student = () => {
         <button type="submit" className="add-button">Thêm sinh viên</button>
       </form>
 
+      {/* Input tìm kiếm */}
+      <div className="search-container">
+        <input
+          type="text"
+          className="search-input"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          placeholder="Tìm kiếm theo tên..."
+        />
+      </div>
+
       {/* Bảng danh sách sinh viên */}
       <table className="student-table">
         <thead>
@@ -136,7 +160,7 @@ const Student = () => {
           </tr>
         </thead>
         <tbody>
-          {students.map((student) => (
+          {filteredStudents.map((student) => (
             <React.Fragment key={student.id}>
               <tr>
                 <td>{student.name}</td>
